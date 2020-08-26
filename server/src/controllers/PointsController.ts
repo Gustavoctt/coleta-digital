@@ -11,10 +11,10 @@ class PointsController{
             return response.status(400).json({message : 'Local não encontrado'});
         }
 
-        const items =  await knex('items')
-            .join('point_items', 'items.id', '=', 'point_items.item_id')
-            .where('point_items.point_id', id)
-            .select('items.title');
+        const items =  await knex('actings')
+            .join('point_actings', 'actings.id', '=', 'point_actings.actings_id')
+            .where('point_actings.point_id', id)
+            .select('actings.title');
 
             const serializedPoint = {
                 ...point,
@@ -30,8 +30,8 @@ class PointsController{
         const parsedItems = String(items).split(',').map(item => Number(item.trim()));
 
         const points = await knex('points')
-            .join('point_items', 'points.id', '=', 'point_items.point_id')
-            .whereIn('point_items.item_id', parsedItems)
+            .join('point_actings', 'points.id', '=', 'point_actings.point_id')
+            .whereIn('point_actings.item_id', parsedItems)
             .where('city', String(city))
             .where('uf', String(uf))
             .distinct()
@@ -54,6 +54,7 @@ class PointsController{
             name,
             email,
             whatsapp,
+            bio,
             latitude,
             longitude,
             city,
@@ -67,6 +68,7 @@ class PointsController{
             image: request.file.filename,
             name,
             email,
+            bio,
             whatsapp,
             latitude,
             longitude,
@@ -88,7 +90,7 @@ class PointsController{
             }
         })
     
-        await trx('point_items').insert(pointItems);
+        await trx('point_actings').insert(pointItems);
 
         await trx.commit();
     
